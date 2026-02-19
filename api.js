@@ -1,5 +1,5 @@
 const API = {
-    url: 'https://script.google.com/macros/s/TU_SCRIPT_ID/exec ',
+    url: 'https://script.google.com/macros/s/1aHeVg-XqrUkfOcuaF9Us0W05MpDH69aSFivr2ElAVHU/exec ',
     
     async request(action, params = {}, method = 'GET') {
         const url = new URL(this.url);
@@ -39,4 +39,5 @@ const API = {
     getUsuarios(token) { return this.request('getUsuarios', { token }); },
     saveUsuario(data, token) { return this.request('saveUsuario', { ...data, token }, 'POST'); },
     getFirmas(token) { return this.request('getFirmas', { token }); }
+
 };
