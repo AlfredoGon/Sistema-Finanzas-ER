@@ -1,10 +1,10 @@
 const API = {
-    url: 'https://script.google.com/macros/s/AKfycbySbCJMdcdgnyRg-QOWLY4BzThhqsjlwoDPFar-T7y0J2lhG3fWp5uSlz-h3E7988C-ow/exec',
-    
+    url: 'https://script.google.com/macros/s/AKfycbzysX024nGS8wdpX8kXPlCRHi1Q2hf--1wLnSmRTtJcnvAnsoMHeYp5Yc9iIuQBF9386A/exec',
+
     async request(action, params = {}, method = 'GET') {
         const url = new URL(this.url);
         url.searchParams.append('action', action);
-        
+
         if (method === 'GET') {
             Object.keys(params).forEach(key => {
                 if (params[key] !== undefined && params[key] !== null) {
@@ -23,7 +23,7 @@ const API = {
             return response.json();
         }
     },
-    
+
     verifyToken(token) { return this.request('verifyToken', { token }); },
     getDashboard(mes, token) { return this.request('getDashboard', { mes, token }); },
     getCuotas(year, token) { return this.request('getCuotas', { year, token }); },
