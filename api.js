@@ -1,29 +1,43 @@
 const API = {
-    url: 'https://script.google.com/macros/s/AKfycbyJbjSd6NeGYNjuoO2yNIBzn9MY09h3NJGtNCCiJLZCnw-8pnSreDTVxy2dAmO48piijQ/exec',
+    url: 'https://script.google.com/macros/s/AKfycbzsdL9hZUWZNK6cymN9jYOs30fDuVAXD2ORr3reyzGXoCOpfeVMntjjRZhR3vFpTxVhug/exec',
 
     async request(action, params = {}, method = 'GET') {
         const url = new URL(this.url);
         url.searchParams.append('action', action);
 
+        // Si es GET, añadimos params a la URL
         if (method === 'GET') {
             Object.keys(params).forEach(key => {
                 if (params[key] !== undefined && params[key] !== null) {
                     url.searchParams.append(key, params[key]);
                 }
             });
-            const response = await fetch(url);
-            return response.json();
+            const response = await fetch(url.toString());
+            return await response.json();
         } else {
-            const body = { action, ...params };
+            // Si es POST, enviamos body como string (GAS necesita text/plain a veces para evitar preflight, pero application/json está bien si el script lo maneja)
+            // Para asegurar compatibilidad con GAS, usamos 'no-cors' si fuera necesario, pero necesitamos respuesta.
+            // La mejor forma con GAS es enviar un POST simple.
+
+            // Importante: GAS a veces tiene problemas con OPTIONS requests (CORS).
+            // Enviamos los datos como stringify en el cuerpo.
+
             const response = await fetch(this.url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
+                // Google Apps Script maneja mejor text/plain para evitar preflight complications en algunos navegadores
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action, ...params })
             });
-            return response.json();
+            return await response.json();
         }
     },
 
+    login(email, password) {
+        // Usamos POST para enviar credenciales de forma más "segura" (en el cuerpo)
+        return this.request('login', { email, password }, 'POST');
+    },
+
+    // verifyToken se mantiene por compatibilidad si se necesitara, pero login es el principal
     verifyToken(token) { return this.request('verifyToken', { token }); },
     getDashboard(mes, token) { return this.request('getDashboard', { mes, token }); },
     getCuotas(year, token) { return this.request('getCuotas', { year, token }); },

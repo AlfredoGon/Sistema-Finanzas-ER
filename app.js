@@ -8,13 +8,13 @@ class ERFinanzasApp {
         this.currentPago = null;
         this.init();
     }
-    
+
     init() {
         this.bindEvents();
         this.updateDate();
         if (this.token && this.user) this.showApp();
     }
-    
+
     bindEvents() {
         document.getElementById('loginForm')?.addEventListener('submit', (e) => this.handleLogin(e));
         document.getElementById('logoutBtn')?.addEventListener('click', () => this.logout());
@@ -35,34 +35,35 @@ class ERFinanzasApp {
         document.getElementById('mFecha') && (document.getElementById('mFecha').value = today);
         document.getElementById('informeFecha') && (document.getElementById('informeFecha').value = today);
     }
-    
+
     updateDate() {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const el = document.getElementById('currentDate');
         if (el) el.textContent = new Date().toLocaleDateString('es-ES', options);
     }
-    
+
     async handleLogin(e) {
         e.preventDefault();
-        const token = document.getElementById('tokenInput').value.trim();
+        const user = document.getElementById('userInput').value.trim();
+        const pass = document.getElementById('passInput').value.trim();
         const btn = document.getElementById('loginBtn');
         const errorEl = document.getElementById('loginError');
-        
-        if (!token) return;
+
+        if (!user || !pass) return;
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verificando...';
         errorEl.classList.add('hidden');
-        
+
         try {
-            const result = await API.verifyToken(token);
+            const result = await API.login(user, pass);
             if (result.success) {
-                this.token = token;
+                this.token = result.token; // El backend nos devolverá un token de sesión
                 this.user = result.user;
-                sessionStorage.setItem('er_token', token);
+                sessionStorage.setItem('er_token', this.token);
                 sessionStorage.setItem('er_user', JSON.stringify(result.user));
                 this.showApp();
             } else {
-                throw new Error('Token inválido');
+                throw new Error('Credenciales inválidas');
             }
         } catch (err) {
             errorEl.classList.remove('hidden');
@@ -72,12 +73,12 @@ class ERFinanzasApp {
             btn.innerHTML = '<span>Iniciar Sesión</span><i class="fas fa-arrow-right ml-2"></i>';
         }
     }
-    
+
     logout() {
         sessionStorage.clear();
         location.reload();
     }
-    
+
     async showApp() {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('appContainer').classList.remove('hidden');
@@ -88,12 +89,12 @@ class ERFinanzasApp {
         await this.loadConfig();
         this.navigateTo('dashboard');
     }
-    
+
     getRolName(rol) {
         const roles = { admin: 'Administrador', operador: 'Operador', visor: 'Visor' };
         return roles[rol] || rol;
     }
-    
+
     async loadConfig() {
         try {
             const result = await API.getConfig(this.token);
@@ -102,7 +103,7 @@ class ERFinanzasApp {
             console.error('Error cargando config:', err);
         }
     }
-    
+
     updateCuentasSelect() {
         const tipo = document.getElementById('mTipo').value;
         const select = document.getElementById('mCuenta');
@@ -111,7 +112,7 @@ class ERFinanzasApp {
         select.innerHTML = '<option value="">Seleccionar cuenta...</option>' +
             cuentas.map(c => `<option value="${c.codigo}">${c.codigo} - ${c.nombre}</option>`).join('');
     }
-    
+
     navigateTo(view) {
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
@@ -122,7 +123,7 @@ class ERFinanzasApp {
         document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
         document.getElementById(`view-${view}`).classList.remove('hidden');
         this.currentView = view;
-        switch(view) {
+        switch (view) {
             case 'dashboard': this.loadDashboard(); break;
             case 'cuotas': this.loadCuotas(); break;
             case 'control': this.loadControl(); break;
@@ -134,14 +135,14 @@ class ERFinanzasApp {
             document.getElementById('sidebar').classList.add('-translate-x-full');
         }
     }
-    
+
     showLoading(show) {
         document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
     }
-    
+
     openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-    
+
     // DASHBOARD
     async loadDashboard() {
         this.showLoading(true);
@@ -169,7 +170,7 @@ class ERFinanzasApp {
             this.showLoading(false);
         }
     }
-    
+
     renderChart(data) {
         const ctx = document.getElementById('mainChart');
         if (!ctx) return;
@@ -187,7 +188,7 @@ class ERFinanzasApp {
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
         });
     }
-    
+
     async loadRecentActivity() {
         try {
             const result = await API.getMovimientos({ limit: 5 }, this.token);
@@ -214,7 +215,7 @@ class ERFinanzasApp {
             console.error('Error cargando actividad:', err);
         }
     }
-    
+
     // CUOTAS
     async loadCuotas() {
         const year = document.getElementById('cuotasYear').value;
@@ -231,7 +232,7 @@ class ERFinanzasApp {
             this.showLoading(false);
         }
     }
-    
+
     renderCuotas(cuotas, year, precios) {
         const tbody = document.getElementById('cuotasTableBody');
         const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -245,12 +246,12 @@ class ERFinanzasApp {
                     <td class="px-3 py-3 font-medium text-gray-900">${c.destacamento}</td>
                     <td class="px-3 py-3 text-gray-600 text-xs">${c.iglesia}</td>
                     ${meses.map(m => {
-                        const isPaid = c[m] === 'X';
-                        const canEdit = this.user.rol !== 'visor';
-                        return `<td class="px-2 py-3 text-center">
+                const isPaid = c[m] === 'X';
+                const canEdit = this.user.rol !== 'visor';
+                return `<td class="px-2 py-3 text-center">
                             ${canEdit ? `<button onclick="app.marcarCuota('${c.no}', '${c.destacamento}', '${m}', ${year}, ${isPaid})" class="w-8 h-8 rounded-full text-xs font-bold transition ${isPaid ? 'bg-green-100 text-green-700 border-2 border-green-500' : 'bg-gray-100 text-gray-400 hover:bg-gray-200 border-2 border-transparent'}">${isPaid ? '✓' : '·'}</button>` : `<span class="w-8 h-8 rounded-full text-xs font-bold inline-flex items-center justify-center ${isPaid ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}">${isPaid ? '✓' : '·'}</span>`}
                         </td>`;
-                    }).join('')}
+            }).join('')}
                     <td class="px-3 py-3 text-center"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${pagados === 12 ? 'bg-green-100 text-green-800' : pagados > 6 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}">${pagados}/12</span></td>
                     <td class="px-3 py-3 text-center"><button onclick="app.verDetalleCuota('${c.no}')" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button></td>
                 </tr>`;
@@ -261,7 +262,7 @@ class ERFinanzasApp {
         const precioRef = precios?.['ENERO']?.cuota || 10;
         document.getElementById('cuotasTotalMonto').textContent = Utils.formatMoney(totalPagaron * precioRef * 12);
     }
-    
+
     marcarCuota(destacamentoId, destacamentoNombre, mes, year, isPaid) {
         if (isPaid) {
             if (!confirm(`¿Anular pago de ${mes.toUpperCase()} para ${destacamentoNombre}?`)) return;
@@ -278,7 +279,7 @@ class ERFinanzasApp {
             this.currentPago = { destacamentoId, mes, year };
         }
     }
-    
+
     async confirmarPagoCuota() {
         const monto = document.getElementById('pagoMonto').value;
         const generarComp = document.getElementById('generarComprobante').checked;
@@ -308,7 +309,7 @@ class ERFinanzasApp {
             this.showLoading(false);
         }
     }
-    
+
     verDetalleCuota(id) { alert('Ver detalle del destacamento ' + id); }
     exportCuotas() {
         const year = document.getElementById('cuotasYear').value;
@@ -316,7 +317,7 @@ class ERFinanzasApp {
             if (result.success) Utils.exportToCSV(result.cuotas, `cuotas_zonales_${year}.csv`);
         });
     }
-    
+
     // CONTROL FINANCIERO
     async loadControl() {
         const mes = document.getElementById('controlMes').value;
@@ -330,7 +331,7 @@ class ERFinanzasApp {
             this.showLoading(false);
         }
     }
-    
+
     renderControl(movimientos) {
         const tbody = document.getElementById('controlTableBody');
         if (!movimientos.length) {
@@ -350,7 +351,7 @@ class ERFinanzasApp {
                 <td class="px-4 py-3 text-center">${this.user.rol === 'admin' ? `<button onclick="app.eliminarMovimiento(${m.id})" class="text-red-500 hover:text-red-700 p-1"><i class="fas fa-trash-alt"></i></button>` : '-'}</td>
             </tr>`).join('');
     }
-    
+
     async guardarMovimiento(e) {
         e.preventDefault();
         const data = {
@@ -389,14 +390,14 @@ class ERFinanzasApp {
             btn.innerHTML = '<i class="fas fa-save mr-2"></i>Guardar Movimiento';
         }
     }
-    
+
     showFormMessage(msg, type) {
         const el = document.getElementById('movimientoMsg');
         el.textContent = msg;
         el.className = `p-4 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
         el.classList.remove('hidden');
     }
-    
+
     async eliminarMovimiento(id) {
         if (!confirm('¿Eliminar este movimiento? Esta acción no se puede deshacer.')) return;
         try {
@@ -409,14 +410,14 @@ class ERFinanzasApp {
             Utils.showToast('Error al eliminar', 'error');
         }
     }
-    
+
     exportControl() {
         const mes = document.getElementById('controlMes').value;
         API.getMovimientos({ mes }, this.token).then(result => {
             if (result.success) Utils.exportToCSV(result.movimientos, `control_financiero_${mes || 'todos'}.csv`);
         });
     }
-    
+
     // INFORME MENSUAL
     async generarInforme() {
         const mes = document.getElementById('informeMes').value;
@@ -432,7 +433,7 @@ class ERFinanzasApp {
             this.showLoading(false);
         }
     }
-    
+
     renderInforme(data) {
         const container = document.getElementById('informeContainer');
         const fecha = new Date(data.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -518,7 +519,7 @@ class ERFinanzasApp {
             </div>`;
         Utils.showToast('Informe generado correctamente');
     }
-    
+
     // COMPROBANTES
     async loadComprobantes() {
         this.showLoading(true);
@@ -531,7 +532,7 @@ class ERFinanzasApp {
             this.showLoading(false);
         }
     }
-    
+
     renderComprobantes(comprobantes) {
         const container = document.getElementById('comprobantesList');
         if (!comprobantes.length) {
@@ -549,20 +550,20 @@ class ERFinanzasApp {
                 <p class="text-lg font-bold text-green-600 text-right">${Utils.formatMoney(c.monto)}</p>
             </div>`).join('');
     }
-    
+
     mostrarComprobante(comp) {
         alert(`Comprobante ${comp.numero}\nDestacamento: ${comp.destacamento}\nMonto: ${Utils.formatMoney(comp.monto)}`);
     }
-    
+
     mostrarComprobanteDetalle(numero) {
         alert('Ver detalle del comprobante: ' + numero);
     }
-    
+
     // CONFIGURACIÓN
     async loadConfiguracion() {
         this.showConfigTab('general');
     }
-    
+
     showConfigTab(tab) {
         document.querySelectorAll('.config-tab').forEach(t => {
             t.classList.remove('active', 'text-blue-600', 'border-b-2', 'border-blue-600', 'bg-blue-50');
@@ -577,7 +578,7 @@ class ERFinanzasApp {
         if (tab === 'correlativos') this.loadCorrelativos();
         if (tab === 'usuarios') this.loadUsuarios();
     }
-    
+
     async loadPrecios() {
         const year = document.getElementById('preciosYear').value;
         try {
@@ -593,7 +594,7 @@ class ERFinanzasApp {
             console.error('Error cargando precios:', err);
         }
     }
-    
+
     async loadFirmas() {
         try {
             const result = await API.getFirmas(this.token);
@@ -616,7 +617,7 @@ class ERFinanzasApp {
             console.error('Error cargando firmas:', err);
         }
     }
-    
+
     async loadCorrelativos() {
         try {
             const result = await API.getConfig(this.token);
@@ -632,7 +633,7 @@ class ERFinanzasApp {
             console.error('Error cargando correlativos:', err);
         }
     }
-    
+
     async loadUsuarios() {
         try {
             const result = await API.getUsuarios(this.token);
@@ -649,23 +650,23 @@ class ERFinanzasApp {
             console.error('Error cargando usuarios:', err);
         }
     }
-    
+
     showModalUsuario() {
         alert('Función de crear usuario - implementar formulario');
     }
-    
+
     editarUsuario(email) {
         alert('Editar usuario: ' + email);
     }
-    
+
     saveConfigGeneral() {
         Utils.showToast('Configuración guardada (simulado)');
     }
-    
+
     saveFirmas() {
         Utils.showToast('Firmas guardadas (simulado)');
     }
-    
+
     actualizarCorrelativo(tipo, serie) {
         const numero = document.getElementById(`corr-${tipo}-${serie}`).value;
         Utils.showToast(`Correlativo ${tipo}-${serie} actualizado a ${numero}`);

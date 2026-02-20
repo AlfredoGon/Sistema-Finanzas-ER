@@ -135,16 +135,24 @@
                       </div>
                   </div>
               <form id="loginForm" class="space-y-6">
-                  <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">Token de Acceso</label>
-                      <div class="relative">
-                          <input type="password" id="tokenInput" required
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                    <div class="relative">
+                        <input type="text" id="userInput" required
                             class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                            placeholder="Ingresa tu token de seguridad">
-                          <i class="fas fa-key absolute left-3 top-3.5 text-gray-400"></i>
-                          </div>
-                      <p class="text-xs text-gray-500 mt-2">Contacta al administrador si no tienes un token.</p>
-                      </div>
+                            placeholder="ejemplo@email.com">
+                        <i class="fas fa-user absolute left-3 top-3.5 text-gray-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <div class="relative">
+                        <input type="password" id="passInput" required
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                            placeholder="••••••••">
+                        <i class="fas fa-lock absolute left-3 top-3.5 text-gray-400"></i>
+                    </div>
+                </div>
                   <button type="submit" id="loginBtn"
                     class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition transform hover:scale-\[1.02] shadow-lg">
                       <span>Iniciar Sesión</span>
@@ -155,7 +163,8 @@
                       <i class="fas fa-exclamation-circle mr-2"></i>
                       <span id="loginErrorText">Token inválido</span>
                       </div>
-                  </form>
+                 
+            </form>
               <div class="mt-8 pt-6 border-t border-gray-200 text-center">
                   <p class="text-xs text-gray-400">Zona de Sonsonate • Coordinación Paracentral</p>
                   <p class="text-xs text-gray-400 mt-1">© 2025 Exploradores del Rey El Salvador</p>
@@ -180,78 +189,81 @@
                               <p class="text-xs text-slate-400">Pro v2.0</p>
                               </div>
                           </div>
-                      <button id="closeSidebar" class="lg:hidden text-slate-400 hover:text-white">
-                          <i class="fas fa-times text-xl">
-                              </button>
-                      </div>
-                  </div>
-              <nav class="flex-1 overflow-y-auto py-4">
-                  <div class="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Principal</div>
-                  <a href="#"
+                    <button id="closeSidebar" class="lg:hidden text-slate-400 hover:text-white">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4">
+                <div class="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Principal</div>
+                <a href="#"
                     class="nav-item active flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
                     data-view="dashboard">
-                      <i class="fas fa-chart-line w-5 text-center group-hover:text-amber-400 transition">
-                          <span>Dashboard</span>
-                          </a>
-                  <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
+                    <i class="fas fa-chart-line w-5 text-center group-hover:text-amber-400 transition"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
                     data-view="cuotas">
-                      <i class="fas fa-clipboard-check w-5 text-center group-hover:text-amber-400 transition">
-                          <span>Cuotas Zonales</span>
-                          <span id="badgeCuotas"
-                            class="ml-auto bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full hidden">0</span>
-                          </a>
-                  <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
+                    <i class="fas fa-clipboard-check w-5 text-center group-hover:text-amber-400 transition"></i>
+                    <span>Cuotas Zonales</span>
+                    <span id="badgeCuotas"
+                        class="ml-auto bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full hidden">0</span>
+                </a>
+                <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
                     data-view="control">
-                      <i class="fas fa-coins w-5 text-center group-hover:text-amber-400 transition">
-                          <span>Control Financiero</span>
-                          </a>
-                  <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
+                    <i class="fas fa-coins w-5 text-center group-hover:text-amber-400 transition"></i>
+                    <span>Control Financiero</span>
+                </a>
+                <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
                     data-view="informe">
-                      <i class="fas fa-file-invoice-dollar w-5 text-center group-hover:text-amber-400 transition">
-                          <span>Informe Mensual</span>
-                          </a>
-                  <div class="px-4 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Operaciones
+                    <i class="fas fa-file-invoice-dollar w-5 text-center group-hover:text-amber-400 transition"></i>
+                    <span>Informe Mensual</span>
+                </a>
+                <div class="px-4 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Operaciones
                 </div>
-                  <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
+                <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
                     data-view="movimiento">
-                      <i class="fas fa-plus-circle w-5 text-center group-hover:text-green-400 transition">
-                          <span>Nuevo Movimiento</span>
-                          </a>
-                  <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
+                    <i class="fas fa-plus-circle w-5 text-center group-hover:text-green-400 transition"></i>
+                    <span>Nuevo Movimiento</span>
+                </a>
+                <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
                     data-view="comprobantes">
-                      <i class="fas fa-receipt w-5 text-center group-hover:text-purple-400 transition">
-                          <span>Comprobantes</span>
-                          </a>
-                  <div class="px-4 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Sistema
+                    <i class="fas fa-receipt w-5 text-center group-hover:text-purple-400 transition"></i>
+                    <span>Comprobantes</span>
+                </a>
+                <div class="px-4 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Sistema
                 </div>
-                  <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
+                <a href="#" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-slate-800 transition group"
                     data-view="configuracion">
-                      <i class="fas fa-cog w-5 text-center group-hover:text-blue-400 transition">
-                          <span>Configuración</span>
-                          </a>
-                  </nav>
-              <div class="p-4 border-t border-slate-800">
-                  <div class="bg-slate-800 rounded-lg p-4 mb-4">
-                      <div class="flex items-center gap-3 mb-3">
-                          <div
-                            class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold"
+                    <i class="fas fa-cog w-5 text-center group-hover:text-blue-400 transition"></i>
+                    <span>Configuración</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-800">
+                <div class="bg-slate-800 rounded-lg p-4 mb-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold"
                             id="userAvatar">U</div>
-                          <div class="flex-1 min-w-0">
-                              <p class="text-sm font-medium text-white truncate" id="userName">Usuario</p>
-                              <p class="text-xs text-slate-400 truncate" id="userRole">Rol</p>
-                              </div>
-                          </div>
-                      <div class="flex items-center justify-between text-xs">
-                          <span class="px-2 py-1 rounded bg-blue-900 text-blue-200" id="userZona">ZSO</span>
-                          <button id="logoutBtn"
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-white truncate" id="userName">Usuario</p>
+                            <p class="text-xs text-slate-400 truncate" id="userRole">Rol</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="px-2 py-1 rounded bg-blue-900 text-blue-200" id="userZona">ZSO</span>
+                        <button id="logoutBtn"
                             class="text-slate-400 hover:text-white transition flex items-center gap-1">
-                              <i class="fas fa-sign-out-alt">
-                                  <span>Salir</span>
-                                  </button>
-                          </div>
-                      </div>
-                  </div>
-              </aside>
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Salir</span>
+                        </button>
+                         
+                    </div>
+                     
+                </div>
+                 
+            </div>
+             
+        </aside>
 
           <main class="flex-1 flex flex-col min-h-screen overflow-hidden">
               <header
