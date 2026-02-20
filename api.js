@@ -1,5 +1,5 @@
 const API = {
-    url: 'https://script.google.com/macros/s/1aHeVg-XqrUkfOcuaF9Us0W05MpDH69aSFivr2ElAVHU/exec ',
+    url: 'https://script.google.com/macros/s/AKfycbySbCJMdcdgnyRg-QOWLY4BzThhqsjlwoDPFar-T7y0J2lhG3fWp5uSlz-h3E7988C-ow/exec',
     
     async request(action, params = {}, method = 'GET') {
         const url = new URL(this.url);
@@ -41,3 +41,4 @@ const API = {
     getFirmas(token) { return this.request('getFirmas', { token }); }
 
 };
+
