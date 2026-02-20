@@ -1,5 +1,5 @@
 const API = {
-    url: 'https://script.google.com/macros/s/AKfycbwj69zy89jrH_1yx3-Pw0JjXWUZ-7RHke1huhzwQ6J6qECMdFn_U5QSa6QK_Cse1DmRVw/exec',
+    url: 'https://script.google.com/macros/s/AKfycbyUtQvH6QkTcj15wUyeV52J9_8lKgf3ElzONB9_YqMOlAiiPEK_usQOrGXpbfjx3UAAqw/exec',
 
     async request(action, params = {}, method = 'GET') {
         const url = new URL(this.url);
