@@ -39,6 +39,4 @@ const API = {
     getUsuarios(token) { return this.request('getUsuarios', { token }); },
     saveUsuario(data, token) { return this.request('saveUsuario', { ...data, token }, 'POST'); },
     getFirmas(token) { return this.request('getFirmas', { token }); }
-
 };
-
